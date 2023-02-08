@@ -1,14 +1,14 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
-import { getUsers } from '../services/userService';
+import { getPlasticTypes } from '../services/plasticTypeService';
 import Pagination from './../common/pagination';
 import { paginate } from '../utils/paginate';
-import UserTable from '../common/userTable';
+import PlasticTypeTable from '../common/plasticTypeTable';
 import MenuHeader from '../common/menuHeader';
 import _ from 'lodash';
 
-const User = () => {
-  const [users, setUsers] = useState([]);
+const PlasticType = () => {
+  const [plasticTypes, setPlasticTypes] = useState([]);
   const [pageSize, setPageSize] = useState(25);
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -33,8 +33,8 @@ const User = () => {
     handlePageChange(0);
 
     async function getData() {
-      const { data } = await getUsers();
-      setUsers(data);
+      const { data } = await getPlasticTypes();
+      setPlasticTypes(data);
     }
 
     getData();
@@ -54,10 +54,10 @@ const User = () => {
   };
 
   const getPagedData = () => {
-    let filtered = users;
+    let filtered = plasticTypes;
     if (searchQuery)
-      filtered = users.filter((u) =>
-        `${u.lastName}, ${u.firstName} ${u.middleName}`.toLowerCase().startsWith(searchQuery.toLocaleLowerCase())
+      filtered = plasticTypes.filter((u) =>
+        u.name.toLowerCase().startsWith(searchQuery.toLocaleLowerCase())
       );
 
     const sorted = _.orderBy(filtered, [sortColumn.path], [sortColumn.order]);
@@ -71,17 +71,18 @@ const User = () => {
       {/* <div className='col-2'><ListGroup items={ }/></div> */}
       <div className='col'>
         <MenuHeader
-          path='users'
-          header={'USERS'}
-          buttonLabel='User'
+          path='products'
+          header={'PRODUCTS'}
+          buttonLabel='Product'
           onSearch={handleSearch}
           searchQuery={searchQuery}
         />
-        <UserTable
-          users={getPagedData().paginated}
+        <PlasticTypeTable
+          plasticTypes={getPagedData().paginated}
           localEnums={localEnums}
           onSort={handleSort}
           sortColumn={sortColumn}
+          setPlasticTypes={setPlasticTypes}
         />
         <Pagination
           totalItems={getPagedData().filtered.length}
@@ -94,4 +95,4 @@ const User = () => {
   );
 };
 
-export default User;
+export default PlasticType;

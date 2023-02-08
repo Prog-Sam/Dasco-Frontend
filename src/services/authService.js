@@ -1,14 +1,35 @@
 import http from './httpService';
 import jwtDecode from 'jwt-decode';
+import { toast } from 'react-toastify';
 
 const tokenKey = 'token';
 
 http.setJwt(getJwt());
 
 export async function login(user) {
-  const auth = await http.post(`/auth`, user);
-  localStorage.setItem(tokenKey, auth.data);
-  return auth;
+  try {
+    const auth = await http.post(`/auth`, user);
+
+    localStorage.setItem(tokenKey, auth.data);
+    return auth;
+  } catch (ex) {
+    toast.error(ex.response.data.message);
+  }
+}
+
+export async function changePass(passwordObject){
+  const currentUserId = getCurrentUser().nameid;
+  try {
+    let localPasswordObject = {...passwordObject, ['id']: currentUserId }
+
+    const auth = await http.put(`/auth/${currentUserId}`, localPasswordObject)
+
+    return auth;
+    
+  } catch (ex) {
+    toast.error(ex.response.data)
+    throw new Error(ex.response.data);
+  }
 }
 
 export function getJwt() {

@@ -4,22 +4,18 @@ import _ from 'lodash';
 import Table from './table';
 import { getCurrentUser } from '../services/authService';
 
-const UserTable = ({ users, localEnums, sortColumn, onSort }) => {
-  
+const ContactTypeTable = ({ contactTypes, localEnums, sortColumn, onSort }) => {
   const columns = [
     { path: 'id', label: 'ID' },
     {
-      key: 'lastName',
-      content: (user) => {
+      key: 'name',
+      content: (contactType) => {
         return (getCurrentUser().role == 'Admin') ?
-        <Link to={'/users/' + user.id}>{user.lastName}</Link>
-        : user.lastName
+        <Link to={'/contactTypes/' + contactType.id}>{contactType.name}</Link>
+        : contactType.name
       },
-      label: 'Lastname',
+      label: 'Name',
     },
-    { path: 'firstName', label: 'Firstname' },
-    { path: 'middleName', label: 'Middlename' },
-    { path: 'position', label: 'Position' },
   ];
 
   return (
@@ -28,9 +24,9 @@ const UserTable = ({ users, localEnums, sortColumn, onSort }) => {
       sortColumn={sortColumn}
       onSort={onSort}
       localEnums={localEnums}
-      data={users}
+      data={contactTypes}
     />
   );
 };
 
-export default UserTable;
+export default ContactTypeTable;

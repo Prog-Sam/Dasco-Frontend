@@ -7,24 +7,27 @@ const Navigation = ({ currentUser, onLogout }) => {
     <Navbar bg='dark' variant='dark' expand='lg'>
       <Container>
         <Navbar.Brand as={Link} to='/'>
-          IVC-ORDERING CRUD
+          DASCO PLASTIC RECYCLING CORPORATION
         </Navbar.Brand>
         <Navbar.Toggle aria-controls='basic-navbar-nav' />
         <Navbar.Collapse id='basic-navbar-nav'>
           <Nav className='me-auto'>
-            <Link to='/branch-settings' className='nav-link'>
-              BRANCH
+            <Link to='/' className='nav-link'>
+              PRODUCTS
             </Link>
-            <Link to='/item-settings' className='nav-link'>
-              ITEM
+            <Link to='/contactUs' className='nav-link'>
+              CONTACT US
             </Link>
-            <Link to='/system-settings' className='nav-link'>
-              SYSTEM
+            <Link to='/aboutUs' className='nav-link'>
+              ABOUT US
             </Link>
             {currentUser && (
               <Fragment>
-                <Link to='/#' className='nav-link'>
-                  {currentUser.name}
+            <Link to='/settings' className='nav-link'>
+              SETTINGS
+            </Link>
+                <Link to='/updatePassword' className='nav-link'>
+                  {currentUser.unique_name.toUpperCase()}
                 </Link>
                 <Link to='/#' className='nav-link' onClick={onLogout}>
                   LOGOUT

@@ -1,14 +1,14 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
-import { getUsers } from '../services/userService';
+import { getContactTypes } from '../services/contactTypeService';
 import Pagination from './../common/pagination';
 import { paginate } from '../utils/paginate';
-import UserTable from '../common/userTable';
+import ContactTypeTable from '../common/contactTypeTable';
 import MenuHeader from '../common/menuHeader';
 import _ from 'lodash';
 
-const User = () => {
-  const [users, setUsers] = useState([]);
+const ContactType = () => {
+  const [contactTypes, setContactTypes] = useState([]);
   const [pageSize, setPageSize] = useState(25);
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -33,8 +33,8 @@ const User = () => {
     handlePageChange(0);
 
     async function getData() {
-      const { data } = await getUsers();
-      setUsers(data);
+      const { data } = await getContactTypes();
+      setContactTypes(data);
     }
 
     getData();
@@ -54,10 +54,10 @@ const User = () => {
   };
 
   const getPagedData = () => {
-    let filtered = users;
+    let filtered = contactTypes;
     if (searchQuery)
-      filtered = users.filter((u) =>
-        `${u.lastName}, ${u.firstName} ${u.middleName}`.toLowerCase().startsWith(searchQuery.toLocaleLowerCase())
+      filtered = contactTypes.filter((u) =>
+        u.name.toLowerCase().startsWith(searchQuery.toLocaleLowerCase())
       );
 
     const sorted = _.orderBy(filtered, [sortColumn.path], [sortColumn.order]);
@@ -71,14 +71,14 @@ const User = () => {
       {/* <div className='col-2'><ListGroup items={ }/></div> */}
       <div className='col'>
         <MenuHeader
-          path='users'
-          header={'USERS'}
-          buttonLabel='User'
+          path='contactTypes'
+          header={'CONTACT TYPES'}
+          buttonLabel='Contact Type'
           onSearch={handleSearch}
           searchQuery={searchQuery}
         />
-        <UserTable
-          users={getPagedData().paginated}
+        <ContactTypeTable
+          contactTypes={getPagedData().paginated}
           localEnums={localEnums}
           onSort={handleSort}
           sortColumn={sortColumn}
@@ -94,4 +94,4 @@ const User = () => {
   );
 };
 
-export default User;
+export default ContactType;

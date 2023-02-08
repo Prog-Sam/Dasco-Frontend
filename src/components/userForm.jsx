@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Joi from 'joi-browser';
 import _ from 'lodash';
 import useForm from '../hooks/useForm';
-import { getBranches } from './../services/branchService';
+import { getCurrentUser } from '../services/authService';
 import { getUser, saveUser, updateUser } from './../services/userService';
 import { toast } from 'react-toastify';
 
@@ -28,22 +28,13 @@ const UserForm = (props) => {
 
   const schema = {
     id: Joi.number().label('ID'),
-    name: Joi.string().required().min(2).label('Name'),
-    branchKey: Joi.number().required().label('Branch Key'),
-    access: Joi.string().required().max(15).label('Access'),
-    username: Joi.string().required().min(6).label('Username'),
-    password: Joi.string().required().min(6).label('Password'),
-    status: Joi.number().required().label('Status'),
-  };
+    firstName: Joi.string().required().min(2).label('Firstname'),
+    middleName: Joi.string().allow('').label('Middlename'),
+    lastName: Joi.string().required().label('Lastname'),
+    position: Joi.string().required().label('Position'),
+  }
 
   useEffect(() => {
-    async function populateBranches() {
-      let { data } = await getBranches();
-      setBranches(data);
-    }
-
-    populateBranches();
-
     const userId = props.match.params.id;
     if (userId === 'New') return;
 
@@ -59,6 +50,8 @@ const UserForm = (props) => {
   }, []);
 
   const doSubmit = async () => {
+    console.log(user);
+    console.log(getCurrentUser());
     try {
       const isNew = props.match.params.id === 'New';
       const result = isNew
@@ -95,12 +88,10 @@ const UserForm = (props) => {
       </h1>
       <form onSubmit={handleSubmit}>
         {renderLabel('ID', props.match.params.id)}
-        {renderInput('name', 'Name')}
-        {renderSelect('branchKey', 'Branch', branches)}
-        {renderSelect('access', 'Access', localEnums.access)}
-        {renderInput('username', 'Username')}
-        {renderInput('password', 'Password', 'password')}
-        {renderSelect('status', 'Status', localEnums.status)}
+        {renderInput('firstName', 'Firstname')}
+        {renderInput('middleName', 'Middlename')}
+        {renderInput('lastName', 'Lastname')}
+        {renderInput('position', 'Position')}
         {renderButton('Submit')}
       </form>
     </div>

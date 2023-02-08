@@ -5,6 +5,7 @@ import _ from 'lodash';
 import Joi from 'joi-browser';
 import ColorDaySelector from '../common/colorDaySelector';
 import { handleColor } from '../utils/ColorIndex';
+import FilePicker from '../common/filePicker';
 import { toast } from 'react-toastify';
 
 const useForm = (
@@ -62,9 +63,11 @@ const useForm = (
     const options = { abortEarly: false };
     const { error } = Joi.validate(mapToViewModel(state), schema, options);
     if (!error) return null;
-
+    
     const localErrors = {};
     for (let item of error.details) localErrors[item.path[0]] = item.message;
+    // console.log(localErrors);
+    // console.log(state);
 
     return localErrors;
   };
@@ -124,6 +127,11 @@ const useForm = (
     );
     localState[name] = JSON.stringify(newColors);
     setState({ ...localState });
+  };
+
+  const handleUpload = (url, name) => {
+    console.log('handleUpload Called');
+    setState({ ...state, [name]: url });
   };
 
   const renderButton = (label) => {
@@ -189,6 +197,20 @@ const useForm = (
       />
     );
   };
+
+  const renderFilePicker = (name, label) => {
+    return (
+      <FilePicker
+        name={name}
+        label={label}
+        error={errors[name]}
+        value={state[name]}
+        modelId={state['id'] || 'New'}
+        handleUpload={handleUpload}
+      />
+    );
+  };
+
   return [
     state,
     setState,
@@ -200,6 +222,7 @@ const useForm = (
     mapToViewModel,
     getSelectedOption,
     renderColorDaySelector,
+    renderFilePicker,
   ];
 };
 

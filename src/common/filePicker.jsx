@@ -1,32 +1,53 @@
-import { setBreadcrumbCallback } from 'raven-js';
 import React, { Fragment, useState } from 'react';
-import { saveFile } from '../services/fileService';
+import { saveFile, deleteFile } from '../services/fileService';
+import { toast } from 'react-toastify';
+import { getCurrentUser } from '../services/authService';
 
-const FilePicker = ({ name, label, error, value, ...rest }) => {
+const FilePicker = ({ name, label, error, value, handleUpload, modelId,...rest }) => {
   const [driveUrl, setDriveUrl] = useState('https://drive.google.com/file/d/');
   const [file, setFile] = useState(null);
   const [currentValue, setCurrentValue] = useState('');
 
   const urlAppender = (url) => {
-    let localValue = currentValue == '' ? url : `${currentValue};${url}`;
-    setCurrentValue(localValue);
+    let localValue = url;
+    // setCurrentValue(localValue);
+
+    handleUpload(localValue, name);
   };
 
   const handleSubmit = async () => {
     if (file) {
       try {
+        toast('Uploading File...');
         const formData = new FormData();
-        formData.append('fileUpload', file.data);
-        const res = await saveFile(formData);
+        formData.append('file', file.data);
+        const res = await saveFile(formData, modelId);
         setFile(null);
-        urlAppender(driveUrl + res.data.response.data.id);
+        console.log(res);
+        urlAppender(res.data);
+        toast('File Uploaded Successfully');
       } catch (ex) {
         console.log(ex);
+        toast.error(ex.message);
       }
       return;
     }
-    console.log('No file selected');
+    toast.error('No file selected');
   };
+
+  const handleDelete = async () => {
+    if(value == '')
+      {
+        toast.error('No File to delete');
+      }
+    try{
+      const res = await deleteFile(value);
+      handleUpload('', name)
+    }
+    catch(ex){
+      toast.error(ex.message);
+    }
+  }
 
   const handleFileChange = (e) => {
     if (e.target.files[0]) {
@@ -61,6 +82,8 @@ const FilePicker = ({ name, label, error, value, ...rest }) => {
           />
         </div>
         <div>
+          {
+            (getCurrentUser().role == 'Admin') &&
           <button
             type='button'
             className='btn btn-primary d-flex align-items-left'
@@ -69,10 +92,21 @@ const FilePicker = ({ name, label, error, value, ...rest }) => {
           >
             Upload Image
           </button>
+          }
         </div>
+        {/* <div>
+          <button
+            type='button'
+            className='btn btn-danger d-flex align-items-left'
+            name={name}
+            onClick={handleDelete}
+          >
+            Remove Current Image
+          </button>
+        </div> */}
         <div>
           <h6 className='d-flex align-items-left' name={name}>
-            Links: {currentValue}
+            Path: {value}
           </h6>
         </div>
         {error && <div className='alert alert-danger'>{error}</div>}
